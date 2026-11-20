@@ -74,7 +74,7 @@ from the [latest release](https://github.com/open-jarvis/OpenJarvis/releases/lat
 | `code-assistant` | Agent with code execution, file I/O, and shell access |
 | `scheduled-monitor` | Stateful agent on a schedule with memory |
 | `chat-simple` | Lightweight conversation, no tools |
-| `my-jarvis` | Personal voice assistant with an English ElevenLabs voice (`jarvis chat --voice`) |
+| `my-jarvis` | English-voiced (ElevenLabs) assistant that sends Gmail emails and Stripe invoices after you approve them — [guide](docs/user-guide/my-jarvis.md) |
 
 Example:
 

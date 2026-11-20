@@ -10,6 +10,33 @@ const TIER_STYLES: Record<string, { label: string; color: string; bg: string }> 
   high:    { label: 'High',    color: 'var(--color-error)',         bg: 'color-mix(in srgb, var(--color-error) 12%, transparent)' },
 };
 
+const ACTION_LABELS: Record<string, string> = {
+  email_send: 'Send email',
+  stripe_invoice_send: 'Send Stripe invoice',
+};
+
+/** Readable preview of what will be sent; raw JSON for other action types. */
+function formatPayload(action: PendingApproval): string {
+  const p = action.payload as Record<string, unknown>;
+  const list = (v: unknown) => (Array.isArray(v) ? v.join(', ') : String(v ?? ''));
+  if (action.action_type === 'email_send') {
+    const cc = Array.isArray(p.cc) && p.cc.length ? `\nCc: ${list(p.cc)}` : '';
+    return `To: ${list(p.to)}${cc}\nSubject: ${String(p.subject ?? '')}\n\n${String(p.body ?? '')}`;
+  }
+  if (action.action_type === 'stripe_invoice_send' && Array.isArray(p.items)) {
+    const currency = String(p.currency ?? '').toUpperCase();
+    const zeroDecimal = ['BIF','CLP','DJF','GNF','JPY','KMF','KRW','MGA','PYG','RWF','UGX','VND','VUV','XAF','XOF','XPF'].includes(currency);
+    const money = (minor: unknown) =>
+      `${(Number(minor) / (zeroDecimal ? 1 : 100)).toFixed(zeroDecimal ? 0 : 2)} ${currency}`;
+    const lines = (p.items as Array<Record<string, unknown>>).map(
+      (it) => `• ${String(it.description)} — ${String(it.quantity)} × ${money(it.unit_amount)} = ${money(it.amount)}`,
+    );
+    const memo = p.memo ? `\nNote: ${String(p.memo)}` : '';
+    return `Customer: ${String(p.customer_name || '')} <${String(p.customer_email)}>\n${lines.join('\n')}\nTotal: ${money(p.total)}\nDue in ${String(p.days_until_due)} days${memo}`;
+  }
+  return JSON.stringify(action.payload, null, 2);
+}
+
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
@@ -25,6 +52,7 @@ export function ApprovalBell() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [processing, setProcessing] = useState<Record<string, boolean>>({});
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
@@ -54,9 +82,23 @@ export function ApprovalBell() {
 
   const handleApprove = async (id: string) => {
     setProcessing(p => ({ ...p, [id]: true }));
+    setNotice(null);
     try {
-      await approveAction(id);
+      const result = await approveAction(id);
       setApprovals(prev => prev.filter(a => a.id !== id));
+      if (result.message) {
+        setNotice({ ok: result.success !== false, text: result.message });
+      }
+    } catch (err) {
+      const status = (err as { status?: number }).status;
+      // 409: already sent, expired or handled elsewhere -- drop it from the list.
+      if (status === 409 || status === 404) {
+        setApprovals(prev => prev.filter(a => a.id !== id));
+      }
+      setNotice({
+        ok: false,
+        text: err instanceof Error && err.message ? err.message : 'Approval failed.',
+      });
     } finally {
       setProcessing(p => ({ ...p, [id]: false }));
     }
@@ -106,7 +148,7 @@ export function ApprovalBell() {
         <div
           className="absolute right-0 top-full mt-1 rounded-xl shadow-2xl overflow-hidden flex flex-col"
           style={{
-            width: '340px',
+            width: 'min(340px, calc(100vw - 24px))',
             maxHeight: '500px',
             background: 'var(--color-bg-secondary)',
             border: '1px solid var(--color-border)',
@@ -135,6 +177,25 @@ export function ApprovalBell() {
               </span>
             )}
           </div>
+
+          {/* Result of the last approval (e.g. "Email sent to ...") */}
+          {notice && (
+            <div
+              role="status"
+              className="px-4 py-2.5 text-[12px] leading-snug flex items-start gap-2"
+              style={{
+                borderBottom: '1px solid var(--color-border)',
+                color: notice.ok ? 'var(--color-success)' : 'var(--color-error)',
+                background: notice.ok
+                  ? 'color-mix(in srgb, var(--color-success) 8%, transparent)'
+                  : 'color-mix(in srgb, var(--color-error) 8%, transparent)',
+                wordBreak: 'break-word',
+              }}
+            >
+              {notice.ok ? <CheckCircle size={13} className="shrink-0 mt-0.5" /> : <XCircle size={13} className="shrink-0 mt-0.5" />}
+              <span>{notice.text}</span>
+            </div>
+          )}
 
           {/* Body */}
           <div className="overflow-y-auto flex-1">
@@ -166,7 +227,7 @@ export function ApprovalBell() {
                         className="text-[11px] font-mono font-semibold"
                         style={{ color: 'var(--color-accent)' }}
                       >
-                        {action.action_type}
+                        {ACTION_LABELS[action.action_type] ?? action.action_type}
                       </span>
                       <div className="flex items-center gap-2">
                         <span
@@ -215,11 +276,11 @@ export function ApprovalBell() {
                           color: 'var(--color-text-secondary)',
                           fontFamily: 'monospace',
                           whiteSpace: 'pre-wrap',
-                          wordBreak: 'break-all',
+                          wordBreak: 'break-word',
                           lineHeight: '1.5',
                         }}
                       >
-                        {JSON.stringify(action.payload, null, 2)}
+                        {formatPayload(action)}
                       </pre>
                     )}
 

@@ -355,3 +355,61 @@ class TestApprovalStoreIntegration:
         resp = client.get("/v1/approvals/pending")
         tiers = {a["tier"] for a in resp.json()["actions"]}
         assert tiers == {"trivial", "low", "medium", "high"}
+
+
+# ---------------------------------------------------------------------------
+# Emails and invoices are sent the moment they are approved
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.skipif(not HAS_FASTAPI, reason="fastapi not installed")
+class TestSendOnApprove:
+    def _queue_email(self, store) -> str:
+        return store.queue_action(
+            action_type="email_send",
+            description="Email to a@b.com",
+            payload={"to": ["a@b.com"], "cc": [], "subject": "s", "body": "b"},
+            permission_key="email_send:a@b.com",
+            tier=TIER_HIGH,
+        ).id
+
+    def test_approve_sends_and_reports(self, client, approval_store, monkeypatch):
+        import openjarvis.tools.business_actions as ba
+
+        sent = []
+        monkeypatch.setattr(
+            ba,
+            "dispatch_action",
+            lambda action: (sent.append(action.id) or True, "Email sent to a@b.com."),
+        )
+        # run_approved_action binds the dispatcher default at definition time.
+        original = ba.run_approved_action
+        monkeypatch.setattr(
+            "openjarvis.server.approval_routes.run_approved_action",
+            lambda store, action_id: original(
+                store, action_id, dispatcher=ba.dispatch_action
+            ),
+        )
+        action_id = self._queue_email(approval_store)
+
+        resp = client.post(f"/v1/approvals/{action_id}/approve")
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["status"] == "executed"
+        assert body["message"] == "Email sent to a@b.com."
+        assert sent == [action_id]
+
+        again = client.post(f"/v1/approvals/{action_id}/approve")
+        assert again.status_code == 409
+        assert sent == [action_id]
+
+    def test_deny_never_sends(self, client, approval_store, monkeypatch):
+        import openjarvis.tools.business_actions as ba
+
+        def _boom(action):
+            raise AssertionError("must not send")
+
+        monkeypatch.setattr(ba, "dispatch_action", _boom)
+        action_id = self._queue_email(approval_store)
+        assert client.post(f"/v1/approvals/{action_id}/deny").status_code == 200
+        assert client.post(f"/v1/approvals/{action_id}/approve").status_code == 409

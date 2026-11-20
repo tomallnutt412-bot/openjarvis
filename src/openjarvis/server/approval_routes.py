@@ -11,9 +11,15 @@ from openjarvis.tools.approval_store import (
     ApprovalStore,
     PendingAction,
 )
+from openjarvis.tools.business_actions import (
+    SEND_ON_APPROVE_TYPES,
+    ActionError,
+    run_approved_action,
+)
 
 try:
     from fastapi import APIRouter, HTTPException
+    from fastapi.concurrency import run_in_threadpool
 except ImportError:
     raise ImportError("fastapi is required for approval routes")
 
@@ -60,6 +66,15 @@ async def approve_action(action_id: str) -> Dict[str, Any]:
     action = store.get_action(action_id)
     if action is None:
         raise HTTPException(status_code=404, detail="Action not found")
+    if action.action_type in SEND_ON_APPROVE_TYPES:
+        # Emails and invoices go out the moment the user approves them, so
+        # the result (sent, or why not) is shown right where they tapped.
+        try:
+            result = await run_in_threadpool(run_approved_action, store, action_id)
+        except ActionError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        logger.info("Action %s approved via UI: %s", action_id, result["status"])
+        return result
     store.update_status(action_id, STATUS_APPROVED)
     logger.info("Action %s approved via UI", action_id)
     return {"status": "approved", "id": action_id}

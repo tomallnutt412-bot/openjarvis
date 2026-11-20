@@ -50,6 +50,7 @@ _BUILTIN_TOOL_MODULES = (
     "browser",
     "browser_axtree",
     "proactive_tools",
+    "business_actions",
 )
 
 for _name in _BUILTIN_TOOL_MODULES:
