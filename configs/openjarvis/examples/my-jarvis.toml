@@ -1,0 +1,58 @@
+# My Jarvis — a personal voice assistant with an English ElevenLabs voice
+# Install with:  jarvis init --preset my-jarvis --force
+#
+# Requirements:
+#   - Ollama installed with the model below (`ollama pull qwen3.5:9b`)
+#   - An ElevenLabs API key:  export ELEVENLABS_API_KEY="your-key"
+#   - Microphone support for voice input:  uv pip install sounddevice
+#     plus a speech-to-text backend, e.g. uv pip install faster-whisper
+#
+# Usage:
+#   jarvis chat --voice          # talk to Jarvis, hear him answer
+#   jarvis chat                  # type to Jarvis (no audio)
+#   jarvis ask "Good morning, Jarvis"
+
+[engine]
+default = "ollama"
+
+[intelligence]
+default_model = "qwen3.5:9b"        # Good balance of quality and speed
+# default_model = "qwen3.5:4b"      # Faster, for smaller machines
+
+[agent]
+default_agent = "simple"
+default_system_prompt = """
+You are Jarvis, a personal AI assistant running locally on your user's own \
+hardware. You are not a cloud service, and you are not Claude, ChatGPT, \
+Gemini or any other branded assistant; if asked who you are, you are Jarvis.
+
+Personality: loyal, efficient, calm under pressure and quietly dry-witted, \
+with a refined English sensibility. Polite but never obsequious, witty but \
+never frivolous. Your humour is understated — a raised eyebrow in voice form.
+
+Address the user as "sir" occasionally (in a greeting or a closing remark), \
+never in every sentence. Use British English spelling and phrasing.
+
+Your replies are usually spoken aloud, so keep them concise and \
+conversational: no markdown, no bullet points, no headers, no emojis. Never \
+invent facts; if you do not know something, say so plainly.
+"""
+
+[speech]
+# Voice output via ElevenLabs.
+# "Daniel — Steady Broadcaster": a formal, middle-aged British male premade
+# voice, available on every ElevenLabs plan.
+tts_backend = "elevenlabs"
+voice_id = "onwK4e9ZLuTAKqWW03F9"
+voice_speed = 1.0
+# Other English voices you can swap in:
+#   JBFqnCBsd6RMkjVDRZzb  George — warm British storyteller (premade)
+#   KTGs4eAh7Cq96ke9BQfP  Hayden — refined RP narrator (library voice)
+#   G17SuINrv2H9FC6nvetn  Christopher — gentle, trustworthy British narrator
+# Speech-to-text for `jarvis chat --voice`
+backend = "auto"
+language = "en"
+
+[server]
+host = "127.0.0.1"
+port = 8000
