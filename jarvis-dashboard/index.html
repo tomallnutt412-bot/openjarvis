@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060b14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Jarvis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one-screen console. Status strip on top, the voice core in the
+     middle, transcript and controls below; two columns on wide screens. */
+  :root {
+    --bg: #060b14;
+    --panel: #0b1422;
+    --line: #1a2b42;
+    --fg: #dbe7f5;
+    --muted: #7d93ad;
+    --core: #4cc9f0;      /* Jarvis speaking */
+    --you: #f4b860;       /* you speaking */
+    --ok: #5ee0a0;
+    --bad: #ff6b6b;
+    --font-display: "Rajdhani", "Arial Narrow", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background:
+      radial-gradient(ellipse at 50% 35%, #0c1a2e 0%, var(--bg) 60%) fixed,
+      var(--bg);
+    color: var(--fg);
+    font: 15px/1.5 var(--font-body);
+    padding:
+      max(12px, env(safe-area-inset-top, 0px))
+      max(16px, env(safe-area-inset-right, 0px))
+      max(12px, env(safe-area-inset-bottom, 0px))
+      max(16px, env(safe-area-inset-left, 0px));
+  }
+  .app {
+    height: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 12px;
+  }
+
+  /* Status strip */
+  .strip {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    font: 500 12px/1 var(--font-mono);
+    letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    border-bottom: 1px solid var(--line); padding-bottom: 10px;
+  }
+  .brand { font: 700 20px/1 var(--font-display); letter-spacing: .32em; color: var(--fg); }
+  .brand span { color: var(--core); }
+  .status { display: inline-flex; align-items: center; gap: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .status[data-state="connected"] .dot { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+  .status[data-state="connecting"] .dot { background: var(--you); animation: blink 1s infinite; }
+  .status[data-state="error"] .dot { background: var(--bad); }
+  .clock { font-variant-numeric: tabular-nums; }
+
+  /* Main area */
+  .main {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 860px) {
+    .main { grid-template-columns: 1.1fr 1fr; grid-template-rows: minmax(0, 1fr); }
+  }
+
+  .core-wrap {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; min-height: 0;
+  }
+  .core {
+    position: relative;
+    width: min(62vw, 300px, 38vh);
+    aspect-ratio: 1; max-width: 100%;
+    border: 0; padding: 0; background: none; cursor: pointer;
+    border-radius: 50%;
+  }
+  .core canvas { width: 100%; height: 100%; display: block; }
+  .core:focus-visible { outline: 2px solid var(--core); outline-offset: 6px; }
+  .core-label {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font: 600 15px/1.2 var(--font-display); letter-spacing: .22em; text-transform: uppercase;
+    color: var(--fg); pointer-events: none; text-align: center;
+  }
+  .hint { color: var(--muted); font-size: 13px; text-align: center; max-width: 34ch; margin: 0; text-wrap: balance; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  button.ctl {
+    font: 600 13px/1 var(--font-display); letter-spacing: .16em; text-transform: uppercase;
+    color: var(--fg); background: var(--panel); border: 1px solid var(--line);
+    padding: 11px 16px; border-radius: 6px; cursor: pointer; min-height: 40px;
+  }
+  button.ctl:hover:not(:disabled) { border-color: var(--core); }
+  button.ctl:disabled { opacity: .4; cursor: default; }
+  button.ctl:focus-visible { outline: 2px solid var(--core); outline-offset: 2px; }
+  button.ctl[aria-pressed="true"] { border-color: var(--you); color: var(--you); }
+  button.ctl.danger { color: var(--bad); }
+
+  /* Transcript */
+  .log {
+    min-height: 0; display: flex; flex-direction: column;
+    background: color-mix(in srgb, var(--panel) 85%, transparent);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  }
+  .log h2 {
+    margin: 0; padding: 10px 14px; border-bottom: 1px solid var(--line);
+    font: 500 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  }
+  .lines { flex: 1; min-height: 120px; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 92%; min-width: 0; overflow-wrap: anywhere; }
+  .msg .who { font: 500 10px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; }
+  .msg.agent .who { color: var(--core); }
+  .msg.user { align-self: flex-end; text-align: right; }
+  .msg.user .who { color: var(--you); }
+  .msg.sys { align-self: center; color: var(--muted); font-size: 13px; text-align: center; }
+  .empty { color: var(--muted); font-size: 13px; margin: auto; text-align: center; max-width: 32ch; }
+  form.say { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+  form.say input {
+    flex: 1; min-width: 0; font: 15px var(--font-body); color: var(--fg);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px;
+  }
+  form.say input:focus-visible { outline: 2px solid var(--core); outline-offset: 0; border-color: transparent; }
+
+  @keyframes blink { 50% { opacity: .3; } }
+  @media (prefers-reduced-motion: reduce) { .status[data-state="connecting"] .dot { animation: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="strip">
+    <div class="brand">J<span>.</span>A<span>.</span>R<span>.</span>V<span>.</span>I<span>.</span>S</div>
+    <div class="status" id="status" data-state="idle"><span class="dot"></span><span id="status-text">Standing by</span></div>
+    <div class="clock" id="clock">--:--</div>
+  </header>
+
+  <main class="main">
+    <section class="core-wrap" aria-label="Voice">
+      <button class="core" id="core" type="button" aria-label="Start talking to Jarvis">
+        <canvas id="orb" width="600" height="600"></canvas>
+        <span class="core-label" id="core-label">Tap to talk</span>
+      </button>
+      <p class="hint" id="hint">Tap the ring and allow the microphone. Speak normally; Jarvis answers out loud.</p>
+      <div class="controls">
+        <button class="ctl" id="mute" type="button" aria-pressed="false" disabled>Mute mic</button>
+        <button class="ctl danger" id="end" type="button" disabled>End</button>
+      </div>
+    </section>
+
+    <section class="log" aria-label="Conversation">
+      <h2>Transcript</h2>
+      <div class="lines" id="lines" aria-live="polite">
+        <p class="empty" id="empty">Your conversation appears here. Try “What can you help me with?”</p>
+      </div>
+      <form class="say" id="say">
+        <input id="say-text" type="text" placeholder="Or type to Jarvis…" autocomplete="off" aria-label="Message Jarvis">
+        <button class="ctl" type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.35.0/dist/lib.iife.js"></script>
+<script>
+(() => {
+  // Your public ElevenLabs agent "My Jarvis" (British "Daniel" voice).
+  const AGENT_ID = "agent_8001m7x1bdx6e1n9vkz435nj8gjb";
+
+  const $ = (id) => document.getElementById(id);
+  const statusEl = $("status"), statusText = $("status-text");
+  const coreBtn = $("core"), coreLabel = $("core-label"), hint = $("hint");
+  const muteBtn = $("mute"), endBtn = $("end");
+  const lines = $("lines"), empty = $("empty");
+  const sayForm = $("say"), sayText = $("say-text");
+
+  let conversation = null;
+  let starting = false;
+  let mode = "idle";       // idle | listening | speaking
+  let muted = false;
+
+  // Clock in UK format
+  const clock = $("clock");
+  const tick = () => {
+    const d = new Date();
+    clock.textContent = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })
+      + " · " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  };
+  tick(); setInterval(tick, 15000);
+
+  function setStatus(state, text) {
+    statusEl.dataset.state = state;
+    statusText.textContent = text;
+  }
+
+  function addLine(kind, text) {
+    if (!text) return;
+    empty.hidden = true;
+    const el = document.createElement("div");
+    el.className = "msg " + kind;
+    if (kind !== "sys") {
+      const who = document.createElement("div");
+      who.className = "who";
+      who.textContent = kind === "agent" ? "Jarvis" : "You";
+      el.appendChild(who);
+    }
+    const body = document.createElement("div");
+    body.textContent = text;
+    el.appendChild(body);
+    lines.appendChild(el);
+    lines.scrollTop = lines.scrollHeight;
+  }
+
+  function setLive(live) {
+    muteBtn.disabled = !live;
+    endBtn.disabled = !live;
+    coreBtn.setAttribute("aria-label", live ? "End conversation" : "Start talking to Jarvis");
+    if (!live) {
+      mode = "idle";
+      coreLabel.textContent = "Tap to talk";
+      muted = false;
+      muteBtn.setAttribute("aria-pressed", "false");
+      muteBtn.textContent = "Mute mic";
+    }
+  }
+
+  async function start() {
+    if (conversation || starting) return;
+    if (!window.ElevenLabsClient) {
+      setStatus("error", "Offline");
+      addLine("sys", "The voice library didn't load. Check your connection and reload.");
+      return;
+    }
+    starting = true;
+    setStatus("connecting", "Connecting");
+    coreLabel.textContent = "Connecting";
+    try {
+      conversation = await ElevenLabsClient.Conversation.startSession({
+        agentId: AGENT_ID,
+        connectionType: "websocket",
+        onConnect: () => { setStatus("connected", "Online"); setLive(true); hint.textContent = "Listening. Tap the ring or End to finish."; },
+        onDisconnect: () => {
+          conversation = null;
+          setStatus("idle", "Standing by");
+          setLive(false);
+          hint.textContent = "Tap the ring to talk again.";
+        },
+        onError: (message) => {
+          setStatus("error", "Error");
+          addLine("sys", "Connection problem: " + (message || "unknown error"));
+        },
+        onMessage: ({ message, role, source }) => {
+          const who = role || (source === "ai" ? "agent" : "user");
+          addLine(who === "agent" ? "agent" : "user", message);
+        },
+        onModeChange: ({ mode: m }) => {
+          mode = m;
+          coreLabel.textContent = m === "speaking" ? "Speaking" : (muted ? "Muted" : "Listening");
+        },
+      });
+    } catch (err) {
+      conversation = null;
+      setLive(false);
+      const denied = err && (err.name === "NotAllowedError" || /permission|denied/i.test(String(err.message || err)));
+      setStatus("error", denied ? "Mic blocked" : "Error");
+      addLine("sys", denied
+        ? "Microphone access was blocked. Allow it in your browser settings for this site, then tap the ring again."
+        : "Couldn't start the conversation: " + (err && err.message ? err.message : err));
+      coreLabel.textContent = "Tap to talk";
+    } finally {
+      starting = false;
+    }
+  }
+
+  async function stop() {
+    const c = conversation;
+    if (!c) return;
+    setStatus("connecting", "Ending");
+    try { await c.endSession(); } catch {}
+  }
+
+  coreBtn.addEventListener("click", () => (conversation ? stop() : start()));
+  endBtn.addEventListener("click", stop);
+  muteBtn.addEventListener("click", () => {
+    if (!conversation) return;
+    muted = !muted;
+    try { conversation.setMicMuted(muted); } catch {}
+    muteBtn.setAttribute("aria-pressed", String(muted));
+    muteBtn.textContent = muted ? "Unmute mic" : "Mute mic";
+    if (mode !== "speaking") coreLabel.textContent = muted ? "Muted" : "Listening";
+  });
+
+  sayForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = sayText.value.trim();
+    if (!text) return;
+    sayText.value = "";
+    if (!conversation) {
+      await start();
+      if (!conversation) return;
+    }
+    try { conversation.sendUserMessage(text); }
+    catch { addLine("sys", "Couldn't send that. Try again."); }
+  });
+
+  // The voice core: rings that swell with Jarvis's voice (blue) or yours (amber).
+  const canvas = $("orb"), ctx = canvas.getContext("2d");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const css = getComputedStyle(document.documentElement);
+  const CORE = css.getPropertyValue("--core").trim(), YOU = css.getPropertyValue("--you").trim();
+  let level = 0, t = 0;
+
+  function draw() {
+    const W = canvas.width, H = canvas.height, cx = W / 2, cy = H / 2, R = W * 0.3;
+    let target = 0;
+    if (conversation) {
+      try {
+        target = mode === "speaking" ? conversation.getOutputVolume() : conversation.getInputVolume();
+      } catch {}
+    }
+    level += (Math.min(1, target * 1.6) - level) * 0.2;
+    t += reduce ? 0 : 0.012;
+    const color = mode === "speaking" || !conversation ? CORE : YOU;
+
+    ctx.clearRect(0, 0, W, H);
+    // glow
+    const g = ctx.createRadialGradient(cx, cy, R * 0.2, cx, cy, R * (1.5 + level * 0.6));
+    g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R * 1.9, 0, Math.PI * 2); ctx.fill();
+
+    // segmented outer ring
+    ctx.lineWidth = W * 0.012;
+    for (let i = 0; i < 36; i++) {
+      const a0 = (i / 36) * Math.PI * 2 + t;
+      ctx.strokeStyle = color + (i % 3 === 0 ? "ee" : "66");
+      ctx.beginPath(); ctx.arc(cx, cy, R * 1.22, a0, a0 + Math.PI * 2 / 36 * 0.6); ctx.stroke();
+    }
+    // counter-rotating thin ring
+    ctx.lineWidth = W * 0.004; ctx.strokeStyle = color + "99";
+    ctx.beginPath(); ctx.arc(cx, cy, R * 1.36, -t * 1.5, -t * 1.5 + Math.PI * 1.4); ctx.stroke();
+
+    // voice-reactive core
+    const r = R * (0.78 + level * 0.35);
+    ctx.lineWidth = W * 0.02; ctx.strokeStyle = color;
+    ctx.beginPath();
+    for (let i = 0; i <= 120; i++) {
+      const a = (i / 120) * Math.PI * 2;
+      const wobble = conversation ? Math.sin(a * 6 + t * 8) * level * R * 0.08 : 0;
+      const x = cx + Math.cos(a) * (r + wobble), y = cy + Math.sin(a) * (r + wobble);
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.closePath(); ctx.stroke();
+    ctx.fillStyle = "#060b14cc"; ctx.fill();
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
