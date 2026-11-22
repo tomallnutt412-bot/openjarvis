@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estate Acquisitions — Fair, Discreet Purchase of Probate Assets</title>
+<meta name="description" content="We purchase property, vehicles, gold and other assets from estates in probate — with fair valuations, clear terms and complete discretion.">
+<!--
+  QUICK EDITS
+  Business details (name, phone, email, area) live in the SITE config near the
+  bottom of this file. Changing them there updates every place they appear.
+-->
+<style>
+  :root {
+    --ink: #1c2530;
+    --ink-soft: #3d4855;
+    --muted: #6b7480;
+    --line: #e3e0d9;
+    --paper: #faf8f4;
+    --paper-2: #f2efe8;
+    --white: #ffffff;
+    --navy: #1f3346;
+    --navy-deep: #16263a;
+    --accent: #a8875a;
+    --accent-soft: #efe6d8;
+    --ok: #3f6b52;
+    --radius: 14px;
+    --shadow-sm: 0 1px 2px rgba(22, 38, 58, .06), 0 2px 8px rgba(22, 38, 58, .04);
+    --shadow-md: 0 10px 30px rgba(22, 38, 58, .10), 0 2px 6px rgba(22, 38, 58, .05);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --max: 1160px;
+    --ease: cubic-bezier(.22, .61, .36, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+  }
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.2; margin: 0; color: var(--ink); letter-spacing: -.01em; }
+  p { margin: 0; }
+
+  .container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+  section { padding: 104px 0; scroll-margin-top: 72px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .eyebrow::before { content: ""; width: 24px; height: 1px; background: currentColor; }
+  .section-head { max-width: 640px; margin-bottom: 56px; }
+  .section-head h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 16px; }
+  .section-head p { color: var(--ink-soft); font-size: 18px; }
+  .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+  .section-head.center .eyebrow::after { content: ""; width: 24px; height: 1px; background: currentColor; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 15px 26px; border-radius: 999px;
+    font: 600 16px/1 var(--sans); text-decoration: none; cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .btn svg { width: 18px; height: 18px; transition: transform .25s var(--ease); }
+  .btn:hover svg { transform: translateX(3px); }
+  .btn-primary { background: var(--navy); color: #fff; box-shadow: 0 6px 18px rgba(31, 51, 70, .22); }
+  .btn-primary:hover { background: var(--navy-deep); transform: translateY(-1px); box-shadow: 0 10px 24px rgba(31, 51, 70, .28); }
+  .btn-ghost { color: var(--ink); border-color: var(--line); background: transparent; }
+  .btn-ghost:hover { border-color: var(--ink-soft); background: var(--white); }
+  .btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px;
+  }
+
+  /* Header */
+  .site-header {
+    position: fixed; inset: 0 0 auto 0; z-index: 50;
+    transition: background-color .3s var(--ease), box-shadow .3s var(--ease), backdrop-filter .3s var(--ease);
+  }
+  .site-header.scrolled {
+    background: rgba(250, 248, 244, .88);
+    backdrop-filter: saturate(160%) blur(12px);
+    -webkit-backdrop-filter: saturate(160%) blur(12px);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-family: var(--serif); font-size: 20px; color: var(--ink); }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 9px; background: var(--navy); color: var(--accent-soft);
+    display: grid; place-items: center; font-family: var(--serif); font-size: 17px; letter-spacing: .02em;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; margin: 0; padding: 0; }
+  .nav-links a:not(.btn) { text-decoration: none; font-size: 15px; color: var(--ink-soft); position: relative; padding: 4px 0; }
+  .nav-links a:not(.btn)::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease);
+  }
+  .nav-links a:not(.btn):hover { color: var(--ink); }
+  .nav-links a:not(.btn):hover::after { transform: scaleX(1); }
+  .nav-links .btn { padding: 11px 20px; font-size: 15px; }
+  .menu-toggle {
+    display: none; width: 44px; height: 44px; border: 0; background: transparent; cursor: pointer; padding: 10px; margin-right: -10px;
+  }
+  .menu-toggle span { display: block; height: 1.5px; background: var(--ink); margin: 6px 0; transition: transform .3s var(--ease), opacity .2s; }
+  .menu-open .menu-toggle span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+  .menu-open .menu-toggle span:nth-child(2) { opacity: 0; }
+  .menu-open .menu-toggle span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+  /* Hero */
+  .hero {
+    position: relative; padding: 168px 0 112px; overflow: hidden;
+    background:
+      radial-gradient(1000px 500px at 85% 0%, rgba(168, 135, 90, .12), transparent 60%),
+      radial-gradient(800px 500px at 0% 100%, rgba(31, 51, 70, .07), transparent 60%),
+      var(--paper);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; align-items: center; }
+  .hero h1 { font-size: clamp(38px, 5.6vw, 62px); margin-bottom: 24px; }
+  .hero h1 em { font-style: italic; color: var(--navy); }
+  .hero-lead { font-size: 19px; color: var(--ink-soft); max-width: 560px; margin-bottom: 36px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 40px; }
+  .hero-assurances { display: flex; flex-wrap: wrap; gap: 12px 28px; list-style: none; padding: 0; margin: 0; color: var(--muted); font-size: 15px; }
+  .hero-assurances li { display: flex; align-items: center; gap: 8px; }
+  .hero-assurances svg { width: 18px; height: 18px; color: var(--ok); flex: none; }
+
+  .hero-card {
+    position: relative; background: var(--white); border: 1px solid var(--line); border-radius: 20px;
+    padding: 36px; box-shadow: var(--shadow-md);
+  }
+  .hero-card::before {
+    content: ""; position: absolute; inset: -14px 14px auto -14px; height: 100%;
+    border: 1px solid var(--line); border-radius: 22px; z-index: -1; background: var(--paper-2);
+  }
+  .hero-card h3 { font-size: 22px; margin-bottom: 6px; }
+  .hero-card > p { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
+  .hero-card ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+  .hero-card li { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; font-size: 15.5px; color: var(--ink-soft); }
+  .hero-card li b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+  .hero-card .num {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); color: var(--navy);
+    display: grid; place-items: center; font: 600 14px/1 var(--sans);
+  }
+  .hero-card .card-foot {
+    margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted);
+  }
+  .hero-card .card-foot a { color: var(--navy); font-weight: 600; text-decoration: none; }
+  .hero-card .card-foot a:hover { text-decoration: underline; }
+
+  /* What we buy */
+  .buy { background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .buy-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .buy-card {
+    position: relative; padding: 32px 28px 30px; border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--paper); transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease), background-color .35s var(--ease);
+  }
+  .buy-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: transparent; background: var(--white); }
+  .icon-wrap {
+    width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center;
+    background: var(--white); border: 1px solid var(--line); color: var(--navy); margin-bottom: 22px;
+    transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease);
+  }
+  .icon-wrap svg { width: 26px; height: 26px; }
+  .buy-card:hover .icon-wrap { background: var(--navy); color: var(--accent-soft); border-color: var(--navy); }
+  .buy-card h3 { font-size: 22px; margin-bottom: 10px; }
+  .buy-card p { color: var(--ink-soft); font-size: 15.5px; margin-bottom: 18px; }
+  .buy-card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; font-size: 14.5px; color: var(--muted); }
+  .buy-card li { padding-left: 16px; position: relative; }
+  .buy-card li::before { content: ""; position: absolute; left: 0; top: .72em; width: 6px; height: 1px; background: var(--accent); }
+
+  /* How it works */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; counter-reset: step; position: relative; }
+  .steps::before {
+    content: ""; position: absolute; top: 27px; left: 28px; right: 28px; height: 1px;
+    background: linear-gradient(90deg, var(--line), var(--accent) 50%, var(--line));
+    transform: scaleX(var(--progress, 0)); transform-origin: left; transition: transform 1.4s var(--ease);
+  }
+  .steps.in-view { --progress: 1; }
+  .step { position: relative; }
+  .step-num {
+    position: relative; z-index: 1; width: 56px; height: 56px; border-radius: 50%;
+    background: var(--paper); border: 1px solid var(--accent); color: var(--navy);
+    display: grid; place-items: center; font-family: var(--serif); font-size: 22px; margin-bottom: 24px;
+  }
+  .step h3 { font-size: 21px; margin-bottom: 10px; }
+  .step p { color: var(--ink-soft); font-size: 15.5px; }
+  .step .meta { margin-top: 14px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+  /* Why us */
+  .why { background: var(--navy); color: #e8ecf1; position: relative; overflow: hidden; }
+  .why::after {
+    content: ""; position: absolute; width: 640px; height: 640px; right: -220px; top: -260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(168, 135, 90, .22), transparent 65%); pointer-events: none;
+  }
+  .why h2, .why h3 { color: #fff; }
+  .why .section-head p { color: #b9c3cf; }
+  .why .eyebrow { color: #d2b78f; }
+  .why-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 72px; align-items: start; position: relative; z-index: 1; }
+  .why-layout .section-head { margin-bottom: 0; }
+  .why-quote {
+    margin-top: 36px; padding: 24px 0 0; border-top: 1px solid rgba(255, 255, 255, .14);
+    font-family: var(--serif); font-size: 20px; font-style: italic; color: #dfe5ec; line-height: 1.5;
+  }
+  .why-quote > span { display: block; margin-top: 12px; font: 500 14px/1.4 var(--sans); font-style: normal; color: #9fabb9; }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .why-item {
+    padding: 28px; border-radius: var(--radius); background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .10);
+    transition: background-color .35s var(--ease), border-color .35s var(--ease), transform .35s var(--ease);
+  }
+  .why-item:hover { background: rgba(255, 255, 255, .07); border-color: rgba(210, 183, 143, .4); transform: translateY(-3px); }
+  .why-item svg { width: 26px; height: 26px; color: #d2b78f; margin-bottom: 18px; }
+  .why-item h3 { font-size: 20px; margin-bottom: 8px; }
+  .why-item p { color: #b9c3cf; font-size: 15.5px; }
+
+  /* Portfolio */
+  .portfolio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .case {
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+  }
+  .case:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .case-visual {
+    position: relative; aspect-ratio: 4 / 3; display: grid; place-items: center; overflow: hidden;
+    color: rgba(31, 51, 70, .55);
+  }
+  .case-visual svg { width: 38%; height: auto; transition: transform .6s var(--ease); }
+  .case:hover .case-visual svg { transform: scale(1.06); }
+  .v1 { background: linear-gradient(145deg, #e9e3d7, #d9d0bf); }
+  .v2 { background: linear-gradient(145deg, #dfe4e8, #c9d1d9); }
+  .v3 { background: linear-gradient(145deg, #efe4cc, #dcc79e); }
+  .v4 { background: linear-gradient(145deg, #e4e1e9, #cfcad8); }
+  .case-tag {
+    position: absolute; top: 14px; left: 14px; padding: 5px 11px; border-radius: 999px;
+    background: rgba(255, 255, 255, .85); font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--ink-soft);
+  }
+  .case-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .case-body h3 { font-size: 19px; }
+  .case-body p { font-size: 14.5px; color: var(--ink-soft); }
+  .case-meta {
+    margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--muted);
+  }
+  .case-meta b { color: var(--ink); font-weight: 600; }
+  .note { margin-top: 28px; font-size: 13.5px; color: var(--muted); text-align: center; }
+
+  /* Contact */
+  .contact { background: var(--paper-2); border-top: 1px solid var(--line); }
+  .contact-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: 64px; align-items: start; }
+  .contact-layout .section-head { margin-bottom: 32px; }
+  .contact-points { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; }
+  .contact-points li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; }
+  .contact-points .icon-wrap { width: 44px; height: 44px; margin: 0; border-radius: 10px; }
+  .contact-points .icon-wrap svg { width: 20px; height: 20px; }
+  .contact-points small { display: block; font-size: 13px; color: var(--muted); }
+  .contact-points a, .contact-points span.val { font-weight: 600; color: var(--ink); text-decoration: none; }
+  .contact-points a:hover { color: var(--navy); text-decoration: underline; }
+  .privacy-note {
+    margin-top: 32px; padding: 18px 20px; border-radius: 12px; background: var(--white); border: 1px solid var(--line);
+    display: flex; gap: 12px; font-size: 14.5px; color: var(--ink-soft);
+  }
+  .privacy-note svg { width: 20px; height: 20px; color: var(--accent); flex: none; margin-top: 2px; }
+
+  .form-card { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 40px; box-shadow: var(--shadow-sm); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .field label .opt { font-weight: 400; color: var(--muted); }
+  .field input, .field select, .field textarea {
+    width: 100%; font: 16px/1.4 var(--sans); color: var(--ink);
+    padding: 13px 14px; border-radius: 10px; border: 1px solid #d6d2c9; background: var(--paper);
+    transition: border-color .2s var(--ease), background-color .2s var(--ease), box-shadow .2s var(--ease);
+    -webkit-appearance: none; appearance: none;
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7480' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px;
+  }
+  .field textarea { min-height: 128px; resize: vertical; }
+  .field input:hover, .field select:hover, .field textarea:hover { border-color: #bdb7ab; }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: var(--navy); background: var(--white); box-shadow: 0 0 0 4px rgba(31, 51, 70, .08);
+  }
+  .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: #b0544a; }
+  .field .err { font-size: 13px; color: #b0544a; min-height: 0; display: none; }
+  .field.invalid .err { display: block; }
+  .form-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 26px; flex-wrap: wrap; }
+  .form-foot p { font-size: 13.5px; color: var(--muted); max-width: 320px; }
+  .form-success { display: none; text-align: center; padding: 32px 8px; }
+  .form-success .check {
+    width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; background: #e5eee8; color: var(--ok);
+    display: grid; place-items: center;
+  }
+  .form-success .check svg { width: 30px; height: 30px; }
+  .form-success .check path { stroke-dasharray: 30; stroke-dashoffset: 30; }
+  .form-card.sent .form-success .check path { animation: draw .6s .2s var(--ease) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .form-success h3 { font-size: 26px; margin-bottom: 10px; }
+  .form-success p { color: var(--ink-soft); max-width: 420px; margin: 0 auto; }
+  .form-card.sent form { display: none; }
+  .form-card.sent .form-success { display: block; animation: fadeUp .5s var(--ease); }
+
+  /* Footer */
+  .site-footer { background: var(--navy-deep); color: #9fabb9; padding: 56px 0 40px; font-size: 14.5px; }
+  .footer-top { display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; padding-bottom: 32px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
+  .site-footer .brand { color: #fff; }
+  .footer-top p { max-width: 360px; margin-top: 14px; }
+  .footer-links { display: flex; gap: 28px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+  .footer-links a { text-decoration: none; color: #c9d1da; }
+  .footer-links a:hover { color: #fff; }
+  .footer-bottom { padding-top: 24px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+
+  /* Reveal animations */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: var(--d, 0s); }
+  .reveal.in-view { opacity: 1; transform: none; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .hero .load { opacity: 0; animation: fadeUp .9s var(--ease) forwards; animation-delay: var(--d, 0s); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
+    .reveal, .hero .load { opacity: 1; transform: none; }
+  }
+
+  /* Responsive */
+  @media (max-width: 1040px) {
+    .buy-grid, .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: repeat(2, 1fr); row-gap: 48px; }
+    .steps::before { display: none; }
+    .why-layout { grid-template-columns: 1fr; gap: 48px; }
+  }
+  @media (max-width: 880px) {
+    section { padding: 80px 0; }
+    .hero { padding: 132px 0 80px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 56px; }
+    .hero-card { max-width: 520px; }
+    .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+    .menu-toggle { display: block; }
+    .nav-links {
+      position: fixed; inset: 72px 0 auto 0; flex-direction: column; align-items: stretch; gap: 0;
+      background: var(--paper); border-bottom: 1px solid var(--line); padding: 8px 24px 24px;
+      box-shadow: 0 16px 30px rgba(22, 38, 58, .08);
+      opacity: 0; transform: translateY(-8px); pointer-events: none; visibility: hidden;
+      transition: opacity .3s var(--ease), transform .3s var(--ease), visibility 0s linear .3s;
+    }
+    .menu-open .nav-links { opacity: 1; transform: none; pointer-events: auto; visibility: visible; transition-delay: 0s; }
+    .menu-open .site-header { background: var(--paper); box-shadow: 0 1px 0 var(--line); }
+    .nav-links li { border-bottom: 1px solid var(--line); }
+    .nav-links li:last-child { border-bottom: 0; padding-top: 16px; }
+    .nav-links a:not(.btn) { display: block; padding: 16px 0; font-size: 17px; }
+    .nav-links a:not(.btn)::after { display: none; }
+    .nav-links .btn { width: 100%; padding: 15px 20px; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .container { padding: 0 16px; }
+    section { padding: 68px 0; }
+    .section-head { margin-bottom: 40px; }
+    .buy-grid, .portfolio-grid, .why-grid, .steps, .form-grid { grid-template-columns: 1fr; }
+    .hero-lead { font-size: 17px; }
+    .hero-actions .btn { flex: 1 1 100%; }
+    .hero-card { padding: 28px 22px; }
+    .hero-card::before { display: none; }
+    .form-card { padding: 28px 20px; }
+    .form-foot .btn { width: 100%; }
+    .why-item { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Inline icon definitions -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16H3.5a1 1 0 0 1-1-1v-3.2a1 1 0 0 1 .3-.7L5 9l1.8-3.4A1.5 1.5 0 0 1 8.1 5h7.8a1.5 1.5 0 0 1 1.3.6L19 9l2.2 2.1a1 1 0 0 1 .3.7V15a1 1 0 0 1-1 1H19"/><path d="M9 16h6"/><circle cx="7" cy="16.5" r="2"/><circle cx="17" cy="16.5" r="2"/><path d="M5 9h14"/></symbol>
+    <symbol id="i-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 20 5 14h6l2.5 6z"/><path d="M10.5 20 13 14h6l2.5 6z"/><path d="M6.5 14 9 8h6l2.5 6"/><path d="M12 3v2M7.5 4.5l1 1.5M16.5 4.5l-1 1.5"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/><path d="m7.5 5.5 9 5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.3 7.5 9.5 4.4-1.2 7.5-4.9 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10M5 7h14M12 5l-7 2M12 5l7 2"/><path d="m5 7-3 7a3.5 3.5 0 0 0 6 0z"/><path d="m19 7-3 7a3.5 3.5 0 0 0 6 0z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1.4 1.4 0 0 0 2-2"/><path d="m14 14 2.5 2.5a1.4 1.4 0 0 0 2-2l-3.9-3.9a2.8 2.8 0 0 0-4 0l-.9.9a1.4 1.4 0 0 1-2-2l2.8-2.8a5 5 0 0 1 6.1-.8l.5.3a3 3 0 0 0 2.1.4L21 6"/><path d="m21 5 1 9-2 2"/><path d="M3 5 2 14l6.5 6.5a1.4 1.4 0 0 0 2-2"/><path d="M3 6h8"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-header" id="top">
+  <div class="container nav">
+    <a href="#top" class="brand" aria-label="Home">
+      <span class="brand-mark" data-site="initials">EA</span>
+      <span data-site="name">Estate Acquisitions</span>
+    </a>
+    <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#what-we-buy">What we buy</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#why-us">Why us</a></li>
+      <li><a href="#examples">Examples</a></li>
+      <li><a href="#contact" class="btn btn-primary">Request a valuation</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <!-- 1. Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow load" style="--d:.05s">Probate asset purchasing</span>
+        <h1 id="hero-title" class="load" style="--d:.15s">A fair, straightforward way to <em>settle an estate’s assets.</em></h1>
+        <p class="hero-lead load" style="--d:.3s">
+          We purchase property, vehicles, gold and other valuables from estates in probate. You receive an
+          honest valuation, a clear written offer and a timeline that works around you — with no pressure
+          and no obligation.
+        </p>
+        <div class="hero-actions load" style="--d:.45s">
+          <a href="#contact" class="btn btn-primary">Request a confidential valuation <svg><use href="#i-arrow"/></svg></a>
+          <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
+        </div>
+        <ul class="hero-assurances load" style="--d:.6s">
+          <li><svg><use href="#i-check"/></svg>No fees or commissions</li>
+          <li><svg><use href="#i-check"/></svg>Written, no-obligation offers</li>
+          <li><svg><use href="#i-check"/></svg>Handled in confidence</li>
+        </ul>
+      </div>
+
+      <aside class="hero-card load" style="--d:.4s" aria-label="What to expect">
+        <h3>What to expect</h3>
+        <p>A calm, clear process from first conversation to completion.</p>
+        <ol>
+          <li><span class="num">1</span><div><b>An initial conversation</b>We listen first, and explain your options plainly.</div></li>
+          <li><span class="num">2</span><div><b>A fair, transparent valuation</b>Based on current market evidence, which we share with you.</div></li>
+          <li><span class="num">3</span><div><b>Completion on your timeline</b>We work alongside your solicitor or executor.</div></li>
+        </ol>
+        <div class="card-foot">
+          <span>Prefer to talk?</span>
+          <a href="tel:+440000000000" data-site="phone-link"><span data-site="phone">0000 000 000</span></a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 2. What we buy -->
+  <section class="buy" id="what-we-buy" aria-labelledby="buy-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">What we buy</span>
+        <h2 id="buy-title">Assets of every kind, handled with the same care</h2>
+        <p>Whether it is a single item or the contents of an entire estate, we can make an offer on all of it or only the parts you choose.</p>
+      </div>
+      <div class="buy-grid">
+        <article class="buy-card reveal" style="--d:0s">
+          <div class="icon-wrap"><svg><use href="#i-home"/></svg></div>
+          <h3>Properties</h3>
+          <p>Houses, flats and land in any condition, including those needing repair or clearance.</p>
+          <ul><li>Residential homes</li><li>Vacant or tenanted</li><li>Land and outbuildings</li></ul>
+        </article>
+        <article class="buy-card reveal" style="--d:.08s">
+          <div class="icon-wrap"><svg><use href="#i-car"/></svg></div>
+          <h3>Vehicles</h3>
+          <p>Cars, vans, motorcycles and classic vehicles, whether in regular use or long in storage.</p>
+          <ul><li>Everyday &amp; classic cars</li><li>Motorcycles &amp; vans</li><li>Caravans &amp; boats</li></ul>
+        </article>
+        <article class="buy-card reveal" style="--d:.16s">
+          <div class="icon-wrap"><svg><use href="#i-gold"/></svg></div>
+          <h3>Gold &amp; Valuables</h3>
+          <p>Precious metals and jewellery, assessed against live market prices and independent appraisal.</p>
+          <ul><li>Bullion &amp; coins</li><li>Jewellery &amp; watches</li><li>Silverware</li></ul>
+        </article>
+        <article class="buy-card reveal" style="--d:.24s">
+          <div class="icon-wrap"><svg><use href="#i-box"/></svg></div>
+          <h3>Other Assets</h3>
+          <p>Collections, antiques, furniture and household contents, valued item by item.</p>
+          <ul><li>Antiques &amp; art</li><li>Collections</li><li>Full house contents</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. How it works -->
+  <section id="how-it-works" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">How it works</span>
+        <h2 id="how-title">Four clear steps, at a pace that suits you</h2>
+        <p>There is no obligation at any stage. You remain in control of every decision.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal" style="--d:0s">
+          <div class="step-num">1</div>
+          <h3>Get in touch</h3>
+          <p>Tell us a little about the estate and the assets involved, by phone or through the form below.</p>
+          <div class="meta">A short conversation</div>
+        </div>
+        <div class="step reveal" style="--d:.12s">
+          <div class="step-num">2</div>
+          <h3>Assessment</h3>
+          <p>We review the assets, arranging a visit or inspection where needed, at a time convenient for you.</p>
+          <div class="meta">Usually within days</div>
+        </div>
+        <div class="step reveal" style="--d:.24s">
+          <div class="step-num">3</div>
+          <h3>Written offer</h3>
+          <p>You receive a clear offer in writing, with the reasoning behind each valuation. Take the time you need.</p>
+          <div class="meta">No obligation</div>
+        </div>
+        <div class="step reveal" style="--d:.36s">
+          <div class="step-num">4</div>
+          <h3>Completion</h3>
+          <p>We coordinate with your solicitor or executor, handle collection and arrange secure payment.</p>
+          <div class="meta">On your timeline</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Why work with us -->
+  <section class="why" id="why-us" aria-labelledby="why-title">
+    <div class="container why-layout">
+      <div class="section-head reveal">
+        <span class="eyebrow">Why work with us</span>
+        <h2 id="why-title">Respectful, reliable and transparent</h2>
+        <p>Settling an estate is rarely simple. Our aim is to make this one part of it easier, handled properly and without fuss.</p>
+        <p class="why-quote">“We understand that behind every estate is a family. We treat each one accordingly.”
+          <span>— The <span data-site="name">Estate Acquisitions</span> team</span>
+        </p>
+      </div>
+      <div class="why-grid">
+        <div class="why-item reveal" style="--d:0s">
+          <svg><use href="#i-shield"/></svg>
+          <h3>Discretion</h3>
+          <p>Every enquiry is handled in strict confidence. We use unmarked vehicles and never advertise a purchase.</p>
+        </div>
+        <div class="why-item reveal" style="--d:.1s">
+          <svg><use href="#i-scale"/></svg>
+          <h3>Fair pricing</h3>
+          <p>Offers are grounded in current market evidence, which we share openly so you can see how we arrived at them.</p>
+        </div>
+        <div class="why-item reveal" style="--d:.2s">
+          <svg><use href="#i-clock"/></svg>
+          <h3>Speed when you need it</h3>
+          <p>We can move quickly to help cover estate costs, or wait patiently while probate runs its course.</p>
+        </div>
+        <div class="why-item reveal" style="--d:.3s">
+          <svg><use href="#i-file"/></svg>
+          <h3>Experience</h3>
+          <p>We work regularly with executors, solicitors and families, and understand the probate process in detail.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Recent examples -->
+  <section id="examples" aria-labelledby="examples-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Recent examples</span>
+        <h2 id="examples-title">A selection of recent acquisitions</h2>
+        <p>Details are summarised and anonymised to protect the privacy of the families we work with.</p>
+      </div>
+      <div class="portfolio-grid">
+        <article class="case reveal" style="--d:0s">
+          <div class="case-visual v1"><span class="case-tag">Property</span><svg><use href="#i-home"/></svg></div>
+          <div class="case-body">
+            <h3>Three-bedroom family home</h3>
+            <p>Purchased as seen, allowing the executors to avoid clearance and renovation costs.</p>
+            <div class="case-meta"><span>Completed in</span><b>4 weeks</b></div>
+          </div>
+        </article>
+        <article class="case reveal" style="--d:.1s">
+          <div class="case-visual v2"><span class="case-tag">Vehicle</span><svg><use href="#i-car"/></svg></div>
+          <div class="case-body">
+            <h3>Classic saloon, garaged</h3>
+            <p>Collected from storage on a covered transporter, with the paperwork handled for the family.</p>
+            <div class="case-meta"><span>Completed in</span><b>6 days</b></div>
+          </div>
+        </article>
+        <article class="case reveal" style="--d:.2s">
+          <div class="case-visual v3"><span class="case-tag">Gold &amp; Valuables</span><svg><use href="#i-gold"/></svg></div>
+          <div class="case-body">
+            <h3>Gold coins and jewellery</h3>
+            <p>Independently assayed and priced against the day’s market rate, itemised in writing.</p>
+            <div class="case-meta"><span>Completed in</span><b>3 days</b></div>
+          </div>
+        </article>
+        <article class="case reveal" style="--d:.3s">
+          <div class="case-visual v4"><span class="case-tag">Other Assets</span><svg><use href="#i-box"/></svg></div>
+          <div class="case-body">
+            <h3>Antique furniture collection</h3>
+            <p>Catalogued on site and removed with care, leaving the property ready for sale.</p>
+            <div class="case-meta"><span>Completed in</span><b>2 weeks</b></div>
+          </div>
+        </article>
+      </div>
+      <p class="note">Examples shown are illustrative placeholders.</p>
+    </div>
+  </section>
+
+  <!-- 6. Contact -->
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div class="container contact-layout">
+      <div class="reveal">
+        <div class="section-head">
+          <span class="eyebrow">Contact</span>
+          <h2 id="contact-title">Start with a confidential conversation</h2>
+          <p>Share as much or as little as you are comfortable with. We will reply within one working day, and there is no obligation to proceed.</p>
+        </div>
+        <ul class="contact-points">
+          <li>
+            <div class="icon-wrap"><svg><use href="#i-phone"/></svg></div>
+            <div><small>Telephone</small><a href="tel:+440000000000" data-site="phone-link"><span data-site="phone">0000 000 000</span></a></div>
+          </li>
+          <li>
+            <div class="icon-wrap"><svg><use href="#i-mail"/></svg></div>
+            <div><small>Email</small><a href="mailto:hello@example.com" data-site="email-link"><span data-site="email">hello@example.com</span></a></div>
+          </li>
+          <li>
+            <div class="icon-wrap"><svg><use href="#i-pin"/></svg></div>
+            <div><small>Area covered</small><span class="val" data-site="area">Nationwide</span></div>
+          </li>
+        </ul>
+        <div class="privacy-note">
+          <svg><use href="#i-lock"/></svg>
+          <span>Your details are used only to respond to your enquiry. They are never shared or sold.</span>
+        </div>
+      </div>
+
+      <div class="form-card reveal" style="--d:.1s">
+        <!-- Connect this form to your backend or a form service by setting the action URL
+             and removing the demo handler in the script below. -->
+        <form id="enquiry-form" action="#" method="post" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="f-name">Full name</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required>
+              <span class="err">Please enter your name.</span>
+            </div>
+            <div class="field">
+              <label for="f-role">Your role <span class="opt">(optional)</span></label>
+              <select id="f-role" name="role">
+                <option value="">Please select</option>
+                <option>Executor or administrator</option>
+                <option>Family member</option>
+                <option>Solicitor or professional</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-email">Email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" required>
+              <span class="err">Please enter a valid email address.</span>
+            </div>
+            <div class="field">
+              <label for="f-phone">Phone <span class="opt">(optional)</span></label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel">
+            </div>
+            <div class="field full">
+              <label for="f-asset">Main type of asset</label>
+              <select id="f-asset" name="asset" required>
+                <option value="">Please select</option>
+                <option>Property</option>
+                <option>Vehicle</option>
+                <option>Gold &amp; valuables</option>
+                <option>Other assets</option>
+                <option>A mixture / not sure yet</option>
+              </select>
+              <span class="err">Please choose an option.</span>
+            </div>
+            <div class="field full">
+              <label for="f-msg">A few details <span class="opt">(optional)</span></label>
+              <textarea id="f-msg" name="message" placeholder="For example, the location, a brief description, and any timing considerations."></textarea>
+            </div>
+          </div>
+          <div class="form-foot">
+            <p>We will respond within one working day. Your enquiry is confidential.</p>
+            <button type="submit" class="btn btn-primary">Send enquiry <svg><use href="#i-arrow"/></svg></button>
+          </div>
+        </form>
+        <div class="form-success" role="status" aria-live="polite">
+          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+          <h3>Thank you</h3>
+          <p>We have received your enquiry and will be in touch within one working day. Please take your time — there is no obligation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a href="#top" class="brand"><span class="brand-mark" data-site="initials">EA</span><span data-site="name">Estate Acquisitions</span></a>
+        <p>Fair, discreet purchase of property, vehicles, gold and other assets from estates in probate.</p>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#what-we-buy">What we buy</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#why-us">Why us</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> <span data-site="name">Estate Acquisitions</span>. All rights reserved.</span>
+      <span>Registered details and privacy policy available on request.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Site details: edit these to update the whole page ----
+  const SITE = {
+    name: "Estate Acquisitions",
+    initials: "EA",
+    phone: "0000 000 000",
+    phoneHref: "+440000000000",
+    email: "hello@example.com",
+    area: "Nationwide"
+  };
+
+  (function () {
+    // Apply site details
+    const set = (key, val) => document.querySelectorAll('[data-site="' + key + '"]').forEach(el => { el.textContent = val; });
+    ["name", "initials", "phone", "email", "area"].forEach(k => set(k, SITE[k]));
+    document.querySelectorAll('[data-site="phone-link"]').forEach(a => a.href = "tel:" + SITE.phoneHref);
+    document.querySelectorAll('[data-site="email-link"]').forEach(a => a.href = "mailto:" + SITE.email);
+    document.title = SITE.name + " — Fair, Discreet Purchase of Probate Assets";
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Header style on scroll
+    const header = document.querySelector(".site-header");
+    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Mobile menu
+    const toggle = document.querySelector(".menu-toggle");
+    const closeMenu = () => {
+      document.body.classList.remove("menu-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Open menu");
+    };
+    toggle.addEventListener("click", () => {
+      const open = document.body.classList.toggle("menu-open");
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+    document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", closeMenu));
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeMenu(); });
+
+    // Scroll reveal
+    const targets = document.querySelectorAll(".reveal, .steps");
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) { entry.target.classList.add("in-view"); io.unobserve(entry.target); }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+      targets.forEach(el => io.observe(el));
+    } else {
+      targets.forEach(el => el.classList.add("in-view"));
+    }
+
+    // Enquiry form (demo handler — replace with a real submission)
+    const form = document.getElementById("enquiry-form");
+    const card = form.closest(".form-card");
+    const validate = field => {
+      const input = field.querySelector("input, select, textarea");
+      const ok = input.checkValidity() && (!input.required || input.value.trim() !== "");
+      field.classList.toggle("invalid", !ok);
+      return ok;
+    };
+    form.querySelectorAll(".field").forEach(field => {
+      const input = field.querySelector("[required]");
+      if (!input) return;
+      input.addEventListener("blur", () => { if (input.value) validate(field); });
+      input.addEventListener("input", () => { if (field.classList.contains("invalid")) validate(field); });
+      input.addEventListener("change", () => { if (field.classList.contains("invalid")) validate(field); });
+    });
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const required = [...form.querySelectorAll(".field")].filter(f => f.querySelector("[required]"));
+      const results = required.map(validate);
+      if (results.includes(false)) {
+        const first = form.querySelector(".field.invalid input, .field.invalid select");
+        if (first) first.focus();
+        return;
+      }
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.firstChild.textContent = "Sending… ";
+      setTimeout(() => {
+        card.classList.add("sent");
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 700);
+    });
+  })();
+</script>
+</body>
+</html>
