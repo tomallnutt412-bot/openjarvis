@@ -206,7 +206,9 @@
   .register th:last-child { text-align: right; padding-right: 0; }
   .register tbody tr { transition: background-color .4s var(--ease); }
   .register tbody tr:hover { background: var(--ivory); }
-  .register-foot { margin-top: 18px; font: italic 400 16px/1.5 var(--text); color: var(--ink-3); }
+  .register-after { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; flex-wrap: wrap; margin-top: 18px; }
+  .register-after .text-link { font-size: 18px; }
+  .register-foot { margin-top: 0; font: italic 400 16px/1.5 var(--text); color: var(--ink-3); }
 
   /* Contact */
   .contact-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 80px; align-items: start; }
@@ -391,6 +393,7 @@
     <ul class="left">
       <li><a class="nl" href="#acquire">What we acquire</a></li>
       <li><a class="nl" href="#process">How we work</a></li>
+      <li><a class="nl" href="sales.html">For sale</a></li>
     </ul>
     <a href="#top" class="wordmark" aria-label="Home">
       <span class="crest ornament" data-ornament="crest"></span>
@@ -398,7 +401,6 @@
     </a>
     <ul class="right">
       <li><a class="nl" href="#principles">Principles</a></li>
-      <li><a class="nl" href="#register">Acquisitions</a></li>
       <li><a class="nl" href="#contact">Enquire</a></li>
     </ul>
     <button class="menu-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
@@ -409,6 +411,7 @@
       <li><a class="ml" href="#process">How we work <em>iii.</em></a></li>
       <li><a class="ml" href="#principles">Principles <em>iv.</em></a></li>
       <li><a class="ml" href="#register">Acquisitions <em>v.</em></a></li>
+      <li><a class="ml" href="sales.html">For sale <em>vi.</em></a></li>
     </ul>
     <a href="#contact" class="btn">Arrange a private valuation</a>
     <p class="m-tel">or telephone <a href="tel:+440000000000" data-site="phone-link"><span data-site="phone">0000 000 000</span></a></p>
@@ -583,7 +586,7 @@
           </table>
         </div>
       </div>
-      <p class="register-foot">Illustrative entries, shown as placeholders. Published details are always anonymised.</p>
+      <div class="register-after"><p class="register-foot">Illustrative entries, shown as placeholders. Published details are always anonymised.</p><a href="sales.html" class="text-link">View pieces currently for sale</a></div>
     </div>
   </section>
 
@@ -703,6 +706,7 @@
           <li><a href="#acquire">What we acquire</a></li>
           <li><a href="#process">How we work</a></li>
           <li><a href="#principles">Our principles</a></li>
+          <li><a href="sales.html">For sale</a></li>
           <li><a href="#contact">Private enquiries</a></li>
         </ul>
       </div>
